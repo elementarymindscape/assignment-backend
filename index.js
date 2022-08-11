@@ -14,6 +14,14 @@ const db = mongoose.connection;
 db.on('error', (error) => console.log(error));
 db.once('open', () => console.log('Connected to db'));
 
+function getYoutubeVideoIdFromURL(url) {
+  let result;
+  let rx =
+    /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+  result = url.match(rx);
+  return result[1];
+}
+
 const Card = require('./Models/CardModel');
 const History = require('./Models/HistoryModel');
 
@@ -53,11 +61,6 @@ app.post('/cards/new', async (req, res) => {
 });
 
 app.patch('/edit/bucketname', async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-  );
   try {
     const oldBucketName = req.body.old_bucket_name;
     const newBucketName = req.body.new_bucket_name;
@@ -104,6 +107,16 @@ app.delete('/cards/delete/:id', async (req, res) => {
   try {
     const id = req.params.id;
     await Card.deleteOne({ _id: ObjectId(`${id}`) });
+    res.send({ message: 'Deleted Card Succesfully!' });
+  } catch (err) {
+    res.status(500).send({ message: 'Failed to delete card' });
+  }
+});
+
+app.delete('/bucket/delete/:bucketname', async (req, res) => {
+  try {
+    const bucketname = req.params.bucketname;
+    await Card.deleteMany({ card_bucket_type: ObjectId(`${bucketname}`) });
     res.send({ message: 'Deleted Card Succesfully!' });
   } catch (err) {
     res.status(500).send({ message: 'Failed to delete card' });
