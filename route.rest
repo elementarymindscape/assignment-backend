@@ -1,1 +1,0 @@
-DELETE https://bucketsassignment.herokuapp.com/cards/delete/62f3eb8ab8b5965fcce637ff
