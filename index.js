@@ -7,14 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// console.log('ASDSAD', process.env.DATABASE_URL);
-
-mongoose.connect(
-  'mongodb+srv://tester:testvivek@test.vz5wxym.mongodb.net/test',
-  {
-    useNewUrlParser: true,
-  }
-);
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
 
 const db = mongoose.connection;
 
