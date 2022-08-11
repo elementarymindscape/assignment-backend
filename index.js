@@ -30,7 +30,7 @@ app.get('/cards', async (req, res) => {
     const allCards = await Card.find({});
     res.send({ cards: allCards });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.send({ message: err.message });
   }
 });
 
@@ -39,7 +39,7 @@ app.get('/cards/types', async (req, res) => {
     const types = await Card.distinct('card_bucket_type');
     res.send({ types: types });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.json({ message: err.message });
   }
 });
 
@@ -56,7 +56,7 @@ app.post('/cards/new', async (req, res) => {
       .status(201)
       .send({ card: newCard, message: 'Card Added Successfully!' });
   } catch (err) {
-    res.status(400).send({ message: 'Failed to add card' });
+    res.send({ message: 'Failed to add card' });
   }
 });
 
@@ -70,7 +70,7 @@ app.patch('/edit/bucketname', async (req, res) => {
     );
     res.send({ message: 'Bucket Name Updated Successfully!' });
   } catch (err) {
-    res.status(500).send({ message: 'Failed to update bucket name' });
+    res.send({ message: err.message });
   }
 });
 
@@ -99,7 +99,7 @@ app.patch('/cards/move/:id', async (req, res) => {
     );
     res.send({ message: `Card Moved to ${moveToBucket} Successfully!` });
   } catch (err) {
-    res.status(500).send({ message: 'Failed to move card' });
+    res.send({ message: 'Failed to move card' });
   }
 });
 
@@ -109,7 +109,7 @@ app.delete('/cards/delete/:id', async (req, res) => {
     await Card.deleteOne({ _id: ObjectId(`${id}`) });
     res.send({ message: 'Deleted Card Succesfully!' });
   } catch (err) {
-    res.status(500).send({ message: 'Failed to delete card' });
+    res.send({ message: 'Failed to delete card' });
   }
 });
 
@@ -119,7 +119,7 @@ app.delete('/bucket/delete/:bucketname', async (req, res) => {
     await Card.deleteMany({ card_bucket_type: ObjectId(`${bucketname}`) });
     res.send({ message: 'Deleted Card Succesfully!' });
   } catch (err) {
-    res.status(500).send({ message: 'Failed to delete card' });
+    res.send({ message: 'Failed to delete card' });
   }
 });
 
@@ -128,7 +128,7 @@ app.get('/history', async (req, res) => {
     const history = await History.find();
     res.send({ cards: history });
   } catch (err) {
-    res.status(400).send({ message: err.message });
+    res.send({ message: err.message });
   }
 });
 
@@ -151,10 +151,10 @@ app.post('/history/create', async (req, res) => {
       return;
     } else {
       await history.save();
-      res.status(201).send({ message: 'Added to history' });
+      res.send({ message: 'Added to history' });
     }
   } catch (err) {
-    res.status(400).send({ message: err.message });
+    res.send({ message: err.message });
   }
 });
 
