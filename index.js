@@ -4,7 +4,12 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 const app = express();
-app.use(cors());
+
+var corsOptions = {
+  methods: ['GET', 'POST', 'DELETE', 'PATCH'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
@@ -24,6 +29,9 @@ function getYoutubeVideoIdFromURL(url) {
 
 const Card = require('./Models/CardModel');
 const History = require('./Models/HistoryModel');
+
+const cards = db.collection('cards');
+const history = db.collection('histories');
 
 app.get('/cards', async (req, res) => {
   try {
@@ -81,7 +89,7 @@ app.patch('/cards/edit/:id', async (req, res) => {
     const newCardName = req.body.card_title;
     const newCardVideoLink = req.body.card_video_link;
     console.table({ id, newCardName, newCardVideoLink });
-    await Card.updateOne(
+    await cards.updateOne(
       { _id: ObjectId(`${id}`) },
       { $set: { card_title: newCardName, card_video_link: newCardVideoLink } }
     );
@@ -96,7 +104,7 @@ app.patch('/cards/move/:id', async (req, res) => {
     const id = req.params.id;
     const moveToBucket = req.body.bucket_name;
     console.table({ id, moveToBucket });
-    await Card.updateOne(
+    await cards.updateOne(
       { _id: ObjectId(`${id}`) },
       { $set: { card_bucket_type: moveToBucket } }
     );
@@ -109,7 +117,7 @@ app.patch('/cards/move/:id', async (req, res) => {
 app.delete('/cards/delete/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    await Card.deleteOne({ _id: ObjectId(`${id}`) });
+    await cards.deleteOne({ _id: ObjectId(`${id}`) });
     res.send({ message: 'Deleted Card Succesfully!' });
   } catch (err) {
     res.send({ message: 'Failed to delete card' });
@@ -119,7 +127,7 @@ app.delete('/cards/delete/:id', async (req, res) => {
 app.delete('/bucket/delete/:bucketname', async (req, res) => {
   try {
     const bucketname = req.params.bucketname;
-    await Card.deleteMany({ card_bucket_type: ObjectId(`${bucketname}`) });
+    await cards.deleteMany({ card_bucket_type: ObjectId(`${bucketname}`) });
     res.send({ message: 'Deleted Card Succesfully!' });
   } catch (err) {
     res.send({ message: 'Failed to delete card' });
