@@ -56,7 +56,7 @@ app.post('/cards/new', async (req, res) => {
       .status(201)
       .send({ card: newCard, message: 'Card Added Successfully!' });
   } catch (err) {
-    res.status(500).send({ message: 'Failed to add card' });
+    res.send({ message: 'Failed to add card' });
   }
 });
 
@@ -64,13 +64,14 @@ app.patch('/edit/bucketname', async (req, res) => {
   try {
     const oldBucketName = req.body.old_bucket_name;
     const newBucketName = req.body.new_bucket_name;
+    console.table({ oldBucketName, newBucketName });
     await Card.updateMany(
       { card_bucket_type: oldBucketName },
       { $set: { card_bucket_type: newBucketName } }
     );
     res.send({ message: 'Bucket Name Updated Successfully!' });
   } catch (err) {
-    res.status(500).send({ message: err.message });
+    res.send({ message: err.message });
   }
 });
 
@@ -79,13 +80,14 @@ app.patch('/cards/edit/:id', async (req, res) => {
     const id = req.params.id;
     const newCardName = req.body.card_title;
     const newCardVideoLink = req.body.card_video_link;
+    console.table({ id, newCardName, newCardVideoLink });
     await Card.updateOne(
       { _id: ObjectId(`${id}`) },
       { $set: { card_title: newCardName, card_video_link: newCardVideoLink } }
     );
     res.send({ message: 'Card Updated Successfully!' });
   } catch (err) {
-    res.status(500).send({ message: 'Failed to update card' });
+    res.send({ message: 'Failed to update card' });
   }
 });
 
@@ -93,13 +95,14 @@ app.patch('/cards/move/:id', async (req, res) => {
   try {
     const id = req.params.id;
     const moveToBucket = req.body.bucket_name;
+    console.table({ id, moveToBucket });
     await Card.updateOne(
       { _id: ObjectId(`${id}`) },
       { $set: { card_bucket_type: moveToBucket } }
     );
     res.send({ message: `Card Moved to ${moveToBucket} Successfully!` });
   } catch (err) {
-    res.status(500).send({ message: 'Failed to move card' });
+    res.send({ message: 'Failed to move card' });
   }
 });
 
@@ -109,7 +112,7 @@ app.delete('/cards/delete/:id', async (req, res) => {
     await Card.deleteOne({ _id: ObjectId(`${id}`) });
     res.send({ message: 'Deleted Card Succesfully!' });
   } catch (err) {
-    res.status(500).send({ message: 'Failed to delete card' });
+    res.send({ message: 'Failed to delete card' });
   }
 });
 
@@ -119,7 +122,7 @@ app.delete('/bucket/delete/:bucketname', async (req, res) => {
     await Card.deleteMany({ card_bucket_type: ObjectId(`${bucketname}`) });
     res.send({ message: 'Deleted Card Succesfully!' });
   } catch (err) {
-    res.status(500).send({ message: 'Failed to delete card' });
+    res.send({ message: 'Failed to delete card' });
   }
 });
 
@@ -128,7 +131,7 @@ app.get('/history', async (req, res) => {
     const history = await History.find();
     res.send({ cards: history });
   } catch (err) {
-    res.status(500).send({ message: err.message });
+    res.send({ message: err.message });
   }
 });
 
@@ -154,7 +157,7 @@ app.post('/history/create', async (req, res) => {
       res.send({ message: 'Added to history' });
     }
   } catch (err) {
-    res.status(500).send({ message: err.message });
+    res.send({ message: err.message });
   }
 });
 
