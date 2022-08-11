@@ -9,17 +9,9 @@ app.use(express.json());
 
 const port = process.env.PORT || 3000;
 
-mongoose
-  .connect(process.env.DATABASE_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then((result) =>
-    app.listen(process.env.PORT || 3000, () => {
-      console.log(`server started.`);
-    })
-  )
-  .catch((err) => console.log(err));
+mongoose.connect(process.env.DATABASE_URL, {
+  useNewUrlParser: true,
+});
 
 const db = mongoose.connection;
 
@@ -155,4 +147,8 @@ app.post('/history/create', async (req, res) => {
   } catch (err) {
     res.status(400).send({ message: err.message });
   }
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`server started.`);
 });
